@@ -73,7 +73,21 @@ jobs:
           FHORIZON_KEYSTORE_PASSWORD: ${{ secrets.FHORIZON_KEYSTORE_PASSWORD }}
           FHORIZON_KEY_ALIAS: ${{ secrets.FHORIZON_KEY_ALIAS }}
           FHORIZON_KEY_PASSWORD: ${{ secrets.FHORIZON_KEY_PASSWORD }}
-        run: ./gradlew --no-daemon --stacktrace -PfhNdkVersion=$NDK_VERSION testDebugUnitTest assembleRelease assembleDebug
+        run: |
+          set -o pipefail
+          ./gradlew --no-daemon -PfhNdkVersion=$NDK_VERSION testDebugUnitTest assembleRelease assembleDebug 2>&1 | tee gradle.log
+      - name: Report build errors as a commit comment
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "CI build failed (run ${GITHUB_RUN_ID}). Error excerpt:"
+            echo '```'
+            grep -E '^e: |error:|warning: unresolved|What went wrong|Execution failed|FAILED|Caused by|> [A-Z]|^\s+at org.junit|expected:|AssertionError' gradle.log | head -120 || tail -80 gradle.log
+            echo '```'
+          } > ci-errors.md
+          gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/comments" -F body=@ci-errors.md >/dev/null
       - name: Check the APK
         run: |
           APK=app/build/outputs/apk/release/app-release.apk
