@@ -6,6 +6,11 @@ on:
     tags: ["v*"]
   pull_request:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Create a GitHub release with this tag (e.g. v0.1.0); empty for a plain build"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -110,12 +115,16 @@ jobs:
         with:
           name: unit-test-reports
           path: app/build/reports/tests/
-      - name: GitHub release (tags)
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: GitHub release
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.release_tag != ''
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || github.ref_name }}
         run: |
-          cp "FHorizonMobile-${GITHUB_SHA::7}-arm64-v8a.apk" "FHorizonMobile-${GITHUB_REF_NAME}-arm64-v8a.apk"
-          gh release create "$GITHUB_REF_NAME" "FHorizonMobile-${GITHUB_REF_NAME}-arm64-v8a.apk" \
-            --title "FHorizon Mobile $GITHUB_REF_NAME" --notes-file docs/RELEASE_NOTES.md || \
-          gh release upload "$GITHUB_REF_NAME" "FHorizonMobile-${GITHUB_REF_NAME}-arm64-v8a.apk" --clobber
+          cp "FHorizonMobile-${GITHUB_SHA::7}-arm64-v8a.apk" "FHorizonMobile-${TAG}-arm64-v8a.apk"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "FHorizonMobile-${TAG}-arm64-v8a.apk" --clobber
+          else
+            gh release create "$TAG" "FHorizonMobile-${TAG}-arm64-v8a.apk" --target "$GITHUB_SHA" \
+              --title "FHorizon Mobile $TAG" --notes-file docs/RELEASE_NOTES.md --prerelease
+          fi
