@@ -1,0 +1,24 @@
+# Build outputs
+/build/
+/app/build/
+/app/.cxx/
+.gradle/
+local.properties
+*.iml
+.idea/
+.DS_Store
+captures/
+.externalNativeBuild/
+
+# Never commit game data, recompiled code, backend modules, APKs or keys:
+# they are built from the player's own disc and stay on the player's devices.
+*.xex
+*.xexp
+*.iso
+*.apk
+*.aab
+*.keystore
+*.jks
+/module-out/
+/pinyon-shift/
+fhorizon-module*.zip

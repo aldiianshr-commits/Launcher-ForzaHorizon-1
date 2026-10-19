@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Game Mode: the player can pick Performance or Battery in the
+     system's game dashboard; the game's own frame limit still applies.
+     System downscaling and ANGLE are off: the renderer is Vulkan and sizes
+     its swapchain itself. -->
+<game-mode-config xmlns:android="http://schemas.android.com/apk/res/android"
+    android:supportsPerformanceGameMode="true"
+    android:supportsBatteryGameMode="true"
+    android:allowGameAngleDriver="false"
+    android:allowGameDownscaling="false"
+    android:allowGameFpsOverride="false" />

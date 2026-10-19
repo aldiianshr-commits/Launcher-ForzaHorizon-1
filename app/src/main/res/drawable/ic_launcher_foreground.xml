@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- An original mark: a road curving to a horizon line under a low sun. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#FFFF8A3D"
+        android:pathData="M54,30a14,14 0,0 1,14 14h-28a14,14 0,0 1,14 -14z" />
+    <path android:fillColor="#FFE8EAF0"
+        android:pathData="M28,46h52v3h-52z" />
+    <path android:fillColor="#FF3D8BFF"
+        android:pathData="M51,49h6l14,31h-34z" />
+    <path android:fillColor="#FFE8EAF0"
+        android:pathData="M53.4,54h1.2l1,6h-3.2zM52.8,64h2.4l1.2,8h-4.8z" />
+</vector>

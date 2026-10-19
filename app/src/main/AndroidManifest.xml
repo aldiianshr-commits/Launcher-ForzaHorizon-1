@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- The game is Vulkan only; required=false so the launcher still installs
+         and can explain what is missing on a device without it. -->
+    <uses-feature android:name="android.hardware.vulkan.version" android:version="0x401000" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <uses-feature android:name="android.hardware.gamepad" android:required="false" />
+    <uses-feature android:name="android.hardware.usb.host" android:required="false" />
+    <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
+
+    <!-- /storage/emulated/0/FHorizon holds the game files and saves, which the
+         recompiled game opens with ordinary file paths. Android 11+ needs
+         "All files access" for that; older versions the legacy permission. -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" tools:ignore="ScopedStorage" />
+
+    <!-- Controller and on-screen control rumble. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- The title opens system-link sockets at its menus; without the
+         permission socket() fails inside the game. Nothing is contacted. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:name=".FHorizonApp"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.FHorizon"
+        android:allowBackup="false"
+        android:largeHeap="true"
+        android:isGame="true"
+        android:appCategory="game"
+        android:hardwareAccelerated="true"
+        android:requestLegacyExternalStorage="true"
+        android:extractNativeLibs="false"
+        tools:targetApi="35">
+
+        <meta-data android:name="android.max_aspect" android:value="3.0" />
+        <meta-data android:name="android.game_mode_config"
+            android:resource="@xml/game_mode_config" />
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.FHorizon"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Full-screen editor for the on-screen control layout. -->
+        <activity
+            android:name=".ui.TouchLayoutEditorActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.FHorizon.Fullscreen" />
+
+        <!-- The game itself: SDL's activity running the recompiled code from
+             the installed backend module. Its own process, so a crash or the
+             runtime's exit() never takes the launcher with it. -->
+        <activity
+            android:name=".game.FHorizonGameActivity"
+            android:process=":game"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.FHorizon.Game"
+            android:screenOrientation="sensorLandscape"
+            android:resizeableActivity="false"
+            android:launchMode="standard"
+            android:preferMinimalPostProcessing="true"
+            android:configChanges="layoutDirection|locale|orientation|uiMode|screenLayout|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation|density|fontScale"
+            android:hardwareAccelerated="true" />
+    </application>
+</manifest>
