@@ -30,7 +30,7 @@ import id.fhorizon.mobile.ui.UiState
 data class ConnectedPad(val id: Int, val name: String, val vendor: Int, val product: Int, val vibrators: Int)
 
 @Suppress("DEPRECATION")
-fun connectedPads(): List<ConnectedPad> = InputDevice.getDeviceIds().mapNotNull { id ->
+fun connectedPads(): List<ConnectedPad> = InputDevice.getDeviceIds().toList().mapNotNull { id ->
     val device = InputDevice.getDevice(id) ?: return@mapNotNull null
     if (!GamepadMapping.isGamepad(device.sources) || device.isVirtual) return@mapNotNull null
     val vibrators = if (Build.VERSION.SDK_INT >= 31) device.vibratorManager.vibratorIds.size

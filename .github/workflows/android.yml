@@ -84,7 +84,7 @@ jobs:
           {
             echo "CI build failed (run ${GITHUB_RUN_ID}). Error excerpt:"
             echo '```'
-            grep -E '^e: |error:|warning: unresolved|What went wrong|Execution failed|FAILED|Caused by|> [A-Z]|^\s+at org.junit|expected:|AssertionError' gradle.log | head -120 || tail -80 gradle.log
+            grep -E '^e: |error:|warning: unresolved|What went wrong|Execution failed|FAILED|Caused by|^> [A-Z][a-z]+ [^T]|^\s+at org.junit|expected:|AssertionError' gradle.log | head -120 || tail -80 gradle.log
             echo '```'
           } > ci-errors.md
           gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/comments" -F body=@ci-errors.md >/dev/null
